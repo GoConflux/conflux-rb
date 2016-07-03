@@ -140,7 +140,9 @@ module Conflux
       Net::HTTP.new(uri.host, uri.port)
     end
 
-    def form_request(net_obj, route, data = {}, headers = {}, error_message)
+    def form_request(net_obj, route, data, headers, error_message)
+      data ||= {}
+      headers ||= {}
       route = data.empty? ? route : "#{route}?#{URI.encode_www_form(data)}"
       request = net_obj.new("/api#{route}")
       request.add_field('Content-Type', 'application/x-www-form-urlencoded')
@@ -149,7 +151,9 @@ module Conflux
       handle_json_response(response, error_message)
     end
 
-    def json_request(net_obj, route, data = {}, headers = {}, error_message)
+    def json_request(net_obj, route, data, headers, error_message)
+      data ||= {}
+      headers ||= {}
       request = net_obj.new("/api#{route}")
       request.add_field('Content-Type', 'application/json')
       add_headers(request, headers)

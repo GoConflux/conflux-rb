@@ -42,7 +42,7 @@ namespace :conflux do
     end
 
     puts "Successfully connected project to conflux app: #{app_slug}"
-    puts "The 'conflux' ruby gem wasn't automatically installed...Make sure it's installed if you haven't already done so."
+    puts "The 'conflux' ruby gem wasn't automatically installed...Make sure it's installed if it's not already."
   end
 
 end
