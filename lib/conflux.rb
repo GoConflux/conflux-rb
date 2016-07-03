@@ -1,17 +1,15 @@
 require 'conflux/version'
-require 'rest-client'
+require 'conflux/helpers'
 require 'json'
 
 module Conflux
   require 'conflux/railtie' if defined?(Rails)
   extend self
 
-  config_vars_path = File.join(Dir.pwd, 'configs.yml')
-
-  if File.exists?(config_vars_path)
+  if File.exists?('../configs.yml')
     require 'yaml'
-    configs = YAML::load_file(config_vars_path) rescue {}
-    configs.each { |key, val|
+    configs = YAML::load_file('../configs.yml') rescue {}
+    (configs || {}).each { |key, val|
       ENV[key] = val if !ENV.key?(key)
     }
   end
@@ -54,12 +52,8 @@ module Conflux
   end
 
   def fetch_configs
-    RestClient.get("#{conflux_url}/api/keys", headers) do |response|
-      if response.code == 200
-        configs = JSON.parse(response.body) rescue []
-        set_configs(configs, !@creds_preset)
-      end
-    end
+    configs = Conflux::Helpers.form_request(Net::HTTP::Get, '/keys', {}, headers, 'Error fetching Conflux configs')
+    set_configs(configs, !@creds_preset)
   end
 
   def set_configs(configs_map, add_to_yml)

@@ -1,3 +1,8 @@
+require 'net/http'
+require 'net/https'
+require 'uri'
+require 'json'
+
 module Conflux
   module Helpers
     extend self
@@ -80,14 +85,6 @@ module Conflux
       RUBY_PLATFORM =~ /mswin32|mingw32/
     end
 
-    def url(route)
-      "#{host_url}/api#{route}"
-    end
-
-    def host_url
-      ENV['CONFLUX_HOST'] || 'http://api.goconflux.com'
-    end
-
     def prompt_user_to_select_app(apps_map)
       answer = nil
       question = "\nWhich Conflux app does this project belong to?\n"
@@ -134,8 +131,39 @@ module Conflux
       exit(1)
     end
 
+    def host_url
+      ENV['CONFLUX_HOST'] || 'http://api.goconflux.com'
+    end
+
+    def http
+      uri = URI.parse(host_url)
+      Net::HTTP.new(uri.host, uri.port)
+    end
+
+    def form_request(net_obj, route, data = {}, headers = {}, error_message)
+      route = data.empty? ? route : "#{route}?#{URI.encode_www_form(data)}"
+      request = net_obj.new("/api#{route}")
+      request.add_field('Content-Type', 'application/x-www-form-urlencoded')
+      add_headers(request, headers)
+      response = http.request(request)
+      handle_json_response(response, error_message)
+    end
+
+    def json_request(net_obj, route, data = {}, headers = {}, error_message)
+      request = net_obj.new("/api#{route}")
+      request.add_field('Content-Type', 'application/json')
+      add_headers(request, headers)
+      request.body = data.to_json
+      response = http.request(request)
+      handle_json_response(response, error_message)
+    end
+
+    def add_headers(request, headers)
+      headers.each { |key, val| request.add_field(key, val) }
+    end
+
     def handle_json_response(response, error_message)
-      if response.code == 200
+      if response.code.to_i == 200
         JSON.parse(response.body) rescue {}
       else
         error(error_message)

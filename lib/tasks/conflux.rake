@@ -10,31 +10,39 @@ namespace :conflux do
     helpers = Conflux::Helpers
     creds = helpers.ask_for_basic_creds
 
-    RestClient.post(helpers.url('/users/apps_basic_auth'), creds) do |response|
-      body = helpers.handle_json_response(response, 'Authentication failed.')
+    auth_response_body = helpers.json_request(
+      Net::HTTP::Post,
+      '/users/apps_basic_auth',
+      creds,
+      nil,
+      'Authentication failed.'
+    )
 
-      # Ask which app user wants to use:
-      app_slug = helpers.prompt_user_to_select_app(body['apps_map'])
+    # Ask which app the user wants to use:
+    app_slug = helpers.prompt_user_to_select_app(auth_response_body['apps_map'])
 
-      RestClient.get(helpers.url("/apps/manifest?app_slug=#{app_slug}"), { 'Conflux-User' => body['token'] }) do |response|
-        resp = helpers.handle_json_response(response, 'Request failed.')
-        manifest_json = resp['manifest']
+    manifest_response_body = helpers.form_request(
+      Net::HTTP::Get,
+      '/apps/manifest',
+      { app_slug: app_slug },
+      { 'Conflux-User' => auth_response_body['token'] },
+      'Connecting to Conflux app failed.'
+    )
 
-        # Create .conflux/ folder if doesn't already exist
-        FileUtils.mkdir_p(helpers.conflux_folder_path) if !File.exists?(helpers.conflux_folder_path)
+    manifest_json = manifest_response_body['manifest']
 
-        puts 'Configuring manifest.json...'
+    # Create .conflux/ folder if doesn't already exist
+    FileUtils.mkdir_p(helpers.conflux_folder_path) if !File.exists?(helpers.conflux_folder_path)
 
-        # Write this app info to a new manifest.json file for the user
-        File.open(helpers.conflux_manifest_path, 'w+') do |f|
-          f.write(JSON.pretty_generate(manifest_json))
-        end
+    puts 'Configuring manifest.json...'
 
-        puts "Successfully connected project to conflux app: #{app_slug}"
-        puts "The 'conflux' ruby gem wasn't automatically installed...Make sure it's installed if you haven't already done so."
-      end
+    # Write this app info to a new manifest.json file for the user
+    File.open(helpers.conflux_manifest_path, 'w+') do |f|
+      f.write(JSON.pretty_generate(manifest_json))
     end
 
+    puts "Successfully connected project to conflux app: #{app_slug}"
+    puts "The 'conflux' ruby gem wasn't automatically installed...Make sure it's installed if you haven't already done so."
   end
 
 end
