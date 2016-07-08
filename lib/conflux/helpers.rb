@@ -132,7 +132,7 @@ module Conflux
     end
 
     def host_url
-      ENV['CONFLUX_HOST'] || 'http://api.goconflux.com'
+      ENV['CONFLUX_HOST'] || 'https://api.goconflux.com'
     end
 
     def http

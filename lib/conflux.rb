@@ -111,7 +111,7 @@ module Conflux
   end
 
   def conflux_url
-    ENV['CONFLUX_HOST'] || 'http://api.goconflux.com'
+    ENV['CONFLUX_HOST'] || 'https://api.goconflux.com'
   end
 
   def yaml_header
