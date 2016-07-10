@@ -135,10 +135,18 @@ module Conflux
       ENV['CONFLUX_HOST'] || 'https://api.goconflux.com'
     end
 
+    def ssl_chek_win(net_http)
+      case RUBY_PLATFORM
+        when /win/i, /ming/i
+          net_http.verify_mode = OpenSSL::SSL::VERIFY_NONE if net_http.use_ssl?
+      end
+    end
+
     def http
       uri = URI.parse(host_url)
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
+      http.use_ssl = true if uri.scheme == 'https'
+      ssl_chek_win(http)
       http
     end
 
