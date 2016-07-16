@@ -1,14 +1,14 @@
 # Conflux Ruby gem
 
-The Conflux Ruby gem is used in tandem with the [Conflux CLI](https://github.com/) to fetch your app's Conflux configs on boot of your Rails server by tying into a Railtie.
+The Conflux Ruby gem is meant to be used in tandem with the [Conflux CLI](https://github.com/GoConflux/conflux-cli) to fetch your app's Conflux configs on boot of your Rails server by tying into a Railtie.
 
-That Railtie can be found in the `lib/conflux/railtie.rb` file.
+That Railtie can be found inside `lib/conflux/railtie.rb`
 
 ## Installation
 
-*If you've installed the Conflux CLI, it should have automatically installed the Conflux Ruby gem for you.*
+**Note: If you've installed the Conflux CLI, it should have automatically installed the Conflux Ruby gem for you.**
 
-But if you need to install in manually for whatever reason, do one of the following:
+If you need to install in manually for whatever reason, do one of the following:
 
 Add this line to your application's Gemfile:
 
@@ -20,7 +20,7 @@ And then install it with bundler:
 
     $ bundle install
 
-Or just gem-install it:
+Or just use gem install:
 
     $ gem install conflux
 
