@@ -87,7 +87,7 @@ module Conflux
 
     def prompt_user_to_select_app(apps_map)
       answer = nil
-      question = "\nWhich Conflux app does this project belong to?\n"
+      question = "\nWhich Conflux bundle do you wish to use for this project?\n"
 
       # Keep asking until the user responds with one of the possible answers
       until !answer.nil?

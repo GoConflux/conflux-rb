@@ -5,8 +5,8 @@ require 'conflux/helpers'
 
 namespace :conflux do
 
-  desc 'Set which conflux app to use for the current directory'
-  task :set_app do
+  desc 'Set which conflux bundle to use for the current directory'
+  task :use_bundle do
     helpers = Conflux::Helpers
     creds = helpers.ask_for_basic_creds
 
@@ -26,7 +26,7 @@ namespace :conflux do
       '/apps/manifest',
       { app_slug: app_slug },
       { 'Conflux-User' => auth_response_body['token'] },
-      'Connecting to Conflux app failed.'
+      'Connecting to Conflux bundle failed.'
     )
 
     manifest_json = manifest_response_body['manifest']
@@ -41,7 +41,7 @@ namespace :conflux do
       f.write(JSON.pretty_generate(manifest_json))
     end
 
-    puts "Successfully connected project to conflux app: #{app_slug}"
+    puts "Successfully connected project to conflux bundle: #{app_slug}"
     puts "The 'conflux' ruby gem wasn't automatically installed...Make sure it's installed if it's not already."
   end
 
