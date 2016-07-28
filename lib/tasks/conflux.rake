@@ -1,5 +1,4 @@
 require 'json'
-require 'rest-client'
 require 'fileutils'
 require 'conflux/helpers'
 
