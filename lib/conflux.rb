@@ -58,7 +58,7 @@ module Conflux
 
   def set_configs(configs_map, add_to_yml)
     # Get application.yml file to make sure config vars aren't already there
-    @app_configs = YAML::load_file(APPLICATION_YAML_PATH) rescue {}
+    @app_configs = (YAML::load_file(APPLICATION_YAML_PATH) || {}) rescue {}
 
     if add_to_yml
       File.open(CONFLUX_YAML_PATH, 'w+') do |f|
